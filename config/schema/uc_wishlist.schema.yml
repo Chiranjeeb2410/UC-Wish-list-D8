@@ -1,0 +1,24 @@
+uc_wishlist.settings:
+  type: config_object
+  mapping:
+    default_title:
+      type: string
+      label:
+    save_address:
+      type:
+      label:
+    default_private:
+      type:
+      label:
+    allow_private:
+      type:
+      label:
+    default_show:
+      type:
+      label:
+    out_of_stock:
+      type:
+      label:
+    default_from:
+      type:
+      label:
