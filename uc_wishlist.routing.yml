@@ -1,0 +1,15 @@
+uc_wishlist.config:
+  path: '/admin/store/config/wishlist'
+  defaults:
+    _form: '\Drupal\uc_wishlist\Form\UcWishlistConfigForm'
+    _title: 'Wish list settings'
+  requirements:
+    _permission: 'administer wish list settings'
+
+entity.uc_wishlist.collection:
+  path: '/admin/store/customers/wishlists'
+  defaults:
+    _entity_list: 'uc_wishlist'
+    _title: 'Wish lists'
+  requirements:
+    _permission: 'administer wish list settings'

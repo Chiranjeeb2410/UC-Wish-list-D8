@@ -1,0 +1,17 @@
+name: 'Wish list/gift registry'
+type: module
+description: 'Allows users to create public shopping wish lists.'
+core: 8.x
+package: 'Ubercart - extra'
+configure: admin/store/settings/wishlist
+
+dependencies:
+  - uc_cart
+  - uc_store
+  - uc_order
+  - uc_product
+
+version: '8.x-1.x'
+project: 'uc_wishlist'
+#datestamp
+
