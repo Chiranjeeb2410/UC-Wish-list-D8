@@ -1,0 +1,5 @@
+uc_wishlist.settings:
+  title: 'Wish list settings'
+  route_name: uc_wishlist.config
+  description: 'Configure the wish list settings.'
+  parent: uc_wishlist.admin.store.config
