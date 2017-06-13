@@ -1,0 +1,7 @@
+uc_wishlist_default_address: '%users wish list'
+uc_wishlist_save_address: false
+uc_wishlist_default_private: false
+uc_wishlist_allow_private: false
+uc_wishlist_show_all: false
+uc_wishlist_out_of_stock: false
+uc_wishlist_default_from:
