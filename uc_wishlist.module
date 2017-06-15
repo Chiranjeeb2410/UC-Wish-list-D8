@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * @file
+ * Contains uc_wishlist.module.
+ */
+
+function uc_wishlist_user_login($account) {
+    $config = \Drupal::config('uc_wishlist.settings');
+    drupal_set_message($config->get('uc_wishlist_UcWishlistConfigForm'));
+}
+
