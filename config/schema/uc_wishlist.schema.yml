@@ -3,22 +3,22 @@ uc_wishlist.settings:
   mapping:
     default_title:
       type: string
-      label:
+      label: Default wish list title.
     save_address:
-      type:
-      label:
+      type: integer
+      label: 'Permit a saved shipping address in a wishlist.'
     default_private:
-      type:
-      label:
+      type: integer
+      label: 'Make users wishlist private by default.'
     allow_private:
-      type:
-      label:
+      type: integer
+      label: 'Allow users to make their wishlist private.'
     default_show:
-      type:
-      label:
+      type: integer
+      label: 'Show all wish lists by default.'
     out_of_stock:
-      type:
-      label:
+      type: integer
+      label: 'Allow users to add out of stock item into wishlist.'
     default_from:
-      type:
-      label:
+      type: string
+      label: 'Specify a default From address.'
