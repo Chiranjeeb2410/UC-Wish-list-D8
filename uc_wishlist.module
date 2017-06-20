@@ -262,7 +262,7 @@ function uc_wishlist_add_item($nid, $qty = 1, $data = NULL, $wid = NULL, $msg = 
         $data['module'] = 'uc_product';
     }
     $data = $node;
-     If Product Kit is enabled,then add products into data array.
+    //If Product Kit is enabled,then add products into data array.
     $moduleHandler = \Drupal::service('module_handler');
 
     if ($moduleHandler->moduleExists('uc_product_kit') && $node->getType() == 'product_kit') {
