@@ -1,5 +1,4 @@
 <?php
-use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * @file
  * Allows users to create public shopping/wish lists.
@@ -188,7 +187,7 @@ function uc_wishlist_add_to_wishlist_submit($form, Drupal\Core\Form\FormState $f
 function uc_wishlist_create_wishlist($title = NULL) {
     $user = \Drupal::currentUser();
 
-    // Abort if user is not logged in and anonymous wish lists are not allowed.
+
     if (!$user->id() && !$user->hasPermission('create wish lists')) {
         drupal_set_message(t('You must be logged in to create a wish list. Please <a href="@login_url">login</a> or <a href="@register_url">register</a>.',
             array(
@@ -198,7 +197,7 @@ function uc_wishlist_create_wishlist($title = NULL) {
         return FALSE;
     }
 
-    // Get the current user ID for the wish list.
+
     $uid = uc_wishlist_get_uid();
     $config = \Drupal::config('uc_wishlist');
     if (empty($title)) {
@@ -276,7 +275,7 @@ function uc_wishlist_add_item($nid, $qty = 1, $data = NULL, $wid = NULL, $msg = 
             $data['products'][$pid]['nid'] = $pid;
             $data['products'][$pid]['qty'] = $product->qty;
 
-            // Creating attributes array.
+
             $attributes = array();
 
             // Getting attributes list of the product.
@@ -302,8 +301,6 @@ function uc_wishlist_add_item($nid, $qty = 1, $data = NULL, $wid = NULL, $msg = 
         $supported_node_types = array_keys(uc_product_node_info());
     }
 
-    // Checking if the node is product type or product kit type.
-
     if (!in_array($node->type, $supported_node_types)) {
         drupal_set_message(t('@title is not a product. Unable to add to wish list.', array('@title' => $node->title)), 'error');
         return;
@@ -326,7 +323,6 @@ function uc_wishlist_add_item($nid, $qty = 1, $data = NULL, $wid = NULL, $msg = 
     }
     */
     $db = new \Drupal\uc_wishlist\Database\DBQuery(\Drupal::database());
-    //$result = db_query("SELECT * FROM {uc_wishlist_products} WHERE wid = :wid AND nid = :nid AND data = :data", array(':wid' => $wid, ':nid' => $nid, ':data' => serialize($data)));
     $item = $db->getWishlistItem($wid,$nid,$data);//$result->fetchObject();
 
     // If the item isn't in the cart yet, add it.
@@ -356,7 +352,6 @@ function uc_wishlist_add_item($nid, $qty = 1, $data = NULL, $wid = NULL, $msg = 
         }
     }
     else {
-        // Update the item instead.
         $qty += $item->qty;
         $wpid = $item->wpid;
 
@@ -416,8 +411,7 @@ function uc_wishlist_get_wid($uid = NULL) {
 function uc_wishlist_get_uid() {
     $user = \Drupal::currentUser();
 
-    // Get either an authenticated user's uid or an anonymous user's unique ID.
-    if ($user->getAccount()->id()) {
+        if ($user->getAccount()->id()) {
         $uid = $user->getAccount()->id();
     }
     else {
