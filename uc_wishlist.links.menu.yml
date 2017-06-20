@@ -5,7 +5,7 @@ uc_wishlist.settings:
   parent: uc_wishlist.admin.store.config
 
 uc_wishlist.admin_wishlist:
-  title: 'Wish list'
+  title: 'Wish lists'
   route_name: uc_wishlist.admin_wishlist
   description: 'Manage user wish lists.'
   parent: uc_wishlist.admin.store.customers

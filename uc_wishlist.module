@@ -321,7 +321,7 @@ function uc_wishlist_add_item($nid, $qty = 1, $data = NULL, $wid = NULL, $msg = 
             }
         }
     }
-    */
+
     $db = new \Drupal\uc_wishlist\Database\DBQuery(\Drupal::database());
     $item = $db->getWishlistItem($wid,$nid,$data);//$result->fetchObject();
 
