@@ -1,27 +1,14 @@
 <?php
-/**
- * @file
- * Contains admin settings for Uc wish list module.
- */
+
 namespace Drupal\uc_wishlist\Form;
+
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-
+/**
+ *
+ */
 class UcWishlistConfigForm extends ConfigFormBase {
-  /**
-   * {@inheritdoc}
-   */
-  protected function getEditableConfigNames() {
-    return ['uc_wishlist.settings'];
-  }
-
-    /**
-     * {@inheritdoc}
-     */
-  public function getFormId() {
-        return 'uc_wishlist_settings';
-  }
 
   /**
    * {@inheritdoc}
@@ -30,7 +17,7 @@ class UcWishlistConfigForm extends ConfigFormBase {
     $config = $this->config('uc_wishlist.settings');
 
     $form['default_title'] = [
-      '#type' => 'textarea',
+      '#type' => 'textfield',
       '#title' => $this->t('Default wish list title'),
       '#description' => $this->t('The default name of a new wish list. The token %user will be replaced by the user\'s name.'),
       '#default_value' => $config->get('default_title'),
@@ -66,7 +53,7 @@ class UcWishlistConfigForm extends ConfigFormBase {
       '#description' => $this->t('Check this box to allow user to add product to their wishlist if product is out of stock.'),
     ];
     $form['default_from'] = [
-      '#type' => 'textarea',
+      '#type' => 'textfield',
       '#title' => $this->t('Specify a default <em>From</em> address'),
       '#default_value' => $config->get('default_from'),
       '#description' => $this->t("If this field is set then all outgoing emails will have the From address set to the given value (normally something like no-reply@example.com). The <em>Reply To</em> address will be set to the users specified email address. This is recommended if you find your outgoing emails are being flagged as spam due to the sender address domain differing from the domain of the outgoing SMTP server."),
@@ -88,14 +75,15 @@ class UcWishlistConfigForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     $this->config('uc_wishlist.settings')
-         ->set('default_title', $values['default_title'])
-         ->set('save_address', $values['save_address'])
-         ->set('default_private', $values['default_private'])
-         ->set('allow_private', $values['allow_private'])
-         ->set('show_all', $values['show_all'])
-         ->set('out_of_stock', $values['out_of_stock'])
-         ->set('default_from', $values['default_from'])
-         ->save();
+      ->set('default_title', $values['default_title'])
+      ->set('save_address', $values['save_address'])
+      ->set('default_private', $values['default_private'])
+      ->set('allow_private', $values['allow_private'])
+      ->set('show_all', $values['show_all'])
+      ->set('out_of_stock', $values['out_of_stock'])
+      ->set('default_from', $values['default_from'])
+      ->save();
     parent::submitForm($form, $form_state);
   }
+
 }

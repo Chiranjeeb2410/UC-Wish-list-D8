@@ -1,10 +1,10 @@
-uc_wishlist.config:
+uc_wishlist.settings:
   path: '/admin/store/config/wishlist'
   defaults:
     _form: '\Drupal\uc_wishlist\Form\UcWishlistConfigForm'
     _title: 'Wish list settings'
   requirements:
-    _permission: 'administer wish list settings'
+    _permission: 'Administer wish list settings.'
   options:
     _admin_route: TRUE
 
@@ -14,7 +14,7 @@ uc_wishlist.admin_wishlist:
     _title: 'Wish lists'
     _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::AdminWishlist'
   requirements:
-    _permission: 'administer wish list settings'
+    _permission: 'Manage user wish lists. '
 
 uc_wishlist.admin_delete:
   path: '/admin/store/customers/wishlist/{uc_wishlist}/delete'

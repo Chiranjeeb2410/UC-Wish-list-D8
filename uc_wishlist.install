@@ -10,148 +10,105 @@
  * Implements hook_schema().
  */
 function uc_wishlist_schema() {
-  $schema = array();
+  $schema = [];
 
-  $schema['uc_wishlists'] = array(
+  $schema['uc_wishlists'] = [
     'description' => 'Stores wishlist meta information related to users.',
-    'fields' => array(
-      'wid' => array(
+    'fields' => [
+      'wid' => [
         'description' => 'The wish list ID.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'uid' => array(
+      ],
+      'uid' => [
         'description' => 'The uid or session ID of the user creating the wish list.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'title' => array(
+      ],
+      'title' => [
         'description' => 'The title of the wish list.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'expiration' => array(
+      ],
+      'expiration' => [
         'description' => 'Timestamp for when the wish list expires.',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'address' => array(
+      ],
+      'address' => [
         'description' => 'Address for shipping items on the wish list.',
         'type' => 'text',
-      ),
-      'private' => array(
+      ],
+      'private' => [
         'description' => 'Private',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
-      ),
-    ),
-    'indexes' => array(
-       'uid' => array('uid'),
-    ),
-    'primary key' => array('wid'),
-  );
+      ],
+    ],
+    'indexes' => [
+       'uid' => ['uid'],
+    ],
+    'primary key' => ['wid'],
+  ];
 
-  $schema['uc_wishlist_products'] = array(
+  $schema['uc_wishlist_products'] = [
     'description' => 'Products assigned to a wish list.',
-    'fields' => array(
-      'wpid' => array(
+    'fields' => [
+      'wpid' => [
         'description' => 'The ID of the wish list product.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'wid' => array(
+      ],
+      'wid' => [
         'description' => 'The {uc_wishlists}.wid for the wish list this product is assigned to.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'nid' => array(
+      ],
+      'nid' => [
         'description' => 'The {node}.nid of the product.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'qty' => array(
+      ],
+      'qty' => [
         'description' => 'The quantity of this product on the wish list.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'changed' => array(
+      ],
+      'changed' => [
         'description' => 'The timestamp of the last change to this wish list product.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => TRUE,
-      ),
-      'data' => array(
+      ],
+      'data' => [
         'description' => 'The data array for the product.',
         'type' => 'text',
-      ),
-      'purchase' => array(
+      ],
+      'purchase' => [
         'description' => 'An array of purchase data for the product.',
         'type' => 'text',
-      ),
-    ),
-    'indexes' => array(
-      'wid' => array('wid'),
-    ),
-    'primary key' => array('wpid'),
-  );
+      ],
+    ],
+    'indexes' => [
+      'wid' => ['wid'],
+    ],
+    'primary key' => ['wpid'],
+  ];
 
   return $schema;
-}
-
-/**
- * Implements hook_uninstall().
- */
-function uc_wishlist_uninstall() {
-    // Removes the used variables.
-    variable_del('uc_wishlist_default_title');
-    variable_del('uc_wishlist_save_address');
-    variable_del('uc_wishlist_allow_anonymous');
-    variable_del('uc_wishlist_default_private');
-    variable_del('uc_wishlist_allow_private');
-    variable_del('uc_wishlist_out_of_stock');
-    variable_del('uc_wishlist_default_from');
-}
-
-/**
- * Update function used to add the private column.
- * @return none
- *   Returns nothing.
- */
-function uc_wishlist_update_7000() {
-  if (!db_field_exists('uc_wishlists', 'private')) {
-    // Create a private column.
-    db_add_field('uc_wishlists', 'private', array(
-      'type' => 'int',
-      'not null' => TRUE,
-      'default' => 0,
-      'description' => 'Private',
-   ));
- }
-}
-
-/**
- * Replaced the anonymous configuration settings with 'create wish lists'
- * permissions.
- */
-function uc_wishlist_update_7001() {
-  $allow_anonymous = variable_get('uc_wishlist_allow_anonymous', FALSE);
-  if ($allow_anonymous) {
-    user_role_change_permissions(DRUPAL_ANONYMOUS_RID, array('create wish lists' => TRUE));
-  }
-  variable_del('uc_wishlist_allow_anonymous');
 }
