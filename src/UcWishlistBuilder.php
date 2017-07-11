@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\myentity\Entity\Controller;
+namespace Drupal\uc_wishlist;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
