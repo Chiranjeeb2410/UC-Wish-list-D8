@@ -12,35 +12,35 @@ use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 
 /**
- * Defines a class to build a listing of wishlist entities.
+ * Defining a class for building list of wishlist entities.
  *
  *@see \Drupal\uc_wishlist\Entity\UcWishlist
  */
 class UcWishlistBuilder extends EntityListBuilder {
 
   /**
-   * The entity query factory.
+   * Entity query factory.
    *
    * @var \Drupal\Core\Entity\Query\QueryFactory
    */
   protected $queryFactory;
 
   /**
-   * The date formatter service.
+   * Date formatter service.
    *
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $dateFormatter;
 
   /**
-   * The redirect destination service.
+   * Redirect destination service.
    *
    * @var \Drupal\Core\Routing\RedirectDestinationInterface
    */
   protected $redirectDestination;
 
   /**
-   * Constructs a new UcWishlistListBuilder object.
+   * Constructing new UcWishlistListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
