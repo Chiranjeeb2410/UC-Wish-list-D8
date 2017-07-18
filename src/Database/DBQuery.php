@@ -127,4 +127,8 @@ class DBQuery {
     $this->connection->delete('uc_wishlist_products')->condition('nid',$pid)->execute();
   }
 
+  public function queryExamples() {
+    $this->connection->query(" ... ");
+    $this->connection->select(" ... ");
+  }
 }

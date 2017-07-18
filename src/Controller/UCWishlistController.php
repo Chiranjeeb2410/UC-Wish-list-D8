@@ -66,7 +66,7 @@ class UCWishlistController extends ControllerBase {
         Link::fromTextAndUrl($wishlist->title, Url::fromRoute('uc_wishlist.wishlist_view', ['wid' => $wishlist->wid]))->toString(),
         \Drupal::service('date.formatter')->format($wishlist->expiration),
         $deleteUrl,
-        );
+        ];
       }
 
       if (empty($rows)) {
@@ -176,4 +176,21 @@ class UCWishlistController extends ControllerBase {
     $render['#wishlist'] = $wishlist;
     return $render;
   }
+
+  /**
+   *
+   */
+  public function userWishlist($user) {
+    return array();
+  }
+
+  /**
+   *
+   */
+  public function searchWishlist() {
+    $render = array();
+    $render['#markup'] = 'Search for a wish list.';
+    return $render;
+  }
+
 }

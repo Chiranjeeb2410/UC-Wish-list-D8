@@ -16,31 +16,27 @@ use Drupal\Core\Routing\RedirectDestinationInterface;
  *
  *@see \Drupal\uc_wishlist\Entity\UcWishlist
  */
-class UcWishlistBuilder extends EntityListBuilder {
+class UcWishlistListBuilder extends EntityListBuilder {
 
   /**
-   * Entity query factory.
-   *
    * @var \Drupal\Core\Entity\Query\QueryFactory
    */
   protected $queryFactory;
 
   /**
-   * Date formatter service.
-   *
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $dateFormatter;
 
   /**
-   * Redirect destination service.
+   * Redirects destination service.
    *
    * @var \Drupal\Core\Routing\RedirectDestinationInterface
    */
   protected $redirectDestination;
 
   /**
-   * Constructing new UcWishlistListBuilder object.
+   * Constructing a new UcWishlistListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.

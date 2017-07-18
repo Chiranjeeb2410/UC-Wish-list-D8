@@ -110,7 +110,7 @@ function uc_wishlist_form_alter(&$form, FormState $form_state, $form_id) {
           '#value' => t('Add to wish list'),
           '#submit' => ['uc_wishlist_add_to_wishlist_submit'],
           '#weight' => 1,
-        );
+        ];
       }
     }
   }
@@ -191,7 +191,7 @@ function uc_wishlist_create_wishlist($title = NULL) {
         [
           '@login_url' => Url::fromRoute('user.login'),
           '@register_url' => Url::fromRoute('user.register')
-        )));
+        ]));
     return FALSE;
   }
 
@@ -362,9 +362,38 @@ function uc_wishlist_add_item($nid, $qty = 1, $data = NULL, $wid = NULL, $msg = 
 
 }
 
+/**
+ * Update information about a specific item in current wish list.
+ */
+function uc_product_update_wishlist_item($nid, $data = array(), $qty, $wid = NULL, $wpid = NULL) {
+    if (!$nid) {
+        return NULL;
+    }
+
+    $wid = $wid ? $wid : uc_wishlist_get_wid();
+
+    if ($qty < 1) {
+        $wpid = $wpid ? $wpid : $data['wpid'];
+        uc_wishlist_remove_item($wpid);
+    }
+    else {
+        db_update('uc_wishlist_products')
+            ->fields(array(
+                'qty' => $qty,
+                'changed' => REQUEST_TIME,
+            ))
+            ->condition('wpid', $wpid)
+            ->execute();
+    }
+
+    if (strpos(\Drupal::request()->getRequestUri(), 'wishlist', 1) !== FALSE) {
+        drupal_set_message(t('Your item(s) have been updated.'));
+    }
+}
+
 //submit callback handler for wishlistviewform add to cart action
 function addToCart(array &$form, FormState $form_state)  {
-  //$form_state->get();
+  $form_state->get();
   $submitButton = $form_state->getTriggeringElement()['#name'];
   $buttonName = $submitButton;
   //the add to cart button was pressed on a product in the wish list
@@ -394,7 +423,6 @@ function addToCart(array &$form, FormState $form_state)  {
  */
 function uc_wishlist_get_wid($uid = NULL) {
   // Find the wish list matching the authenticated or anonymous user ID.
-  // TODO: Handle multiple wishlists?
   if (empty($uid)) {
     $uid = \Drupal::currentUser()->id();//uc_wishlist_get_uid();
   }
@@ -469,9 +497,9 @@ function uc_wishlist_get_contents($wid = NULL) {
     $product = Node::load($item->nid);
     $item->model = $product->get('model')->getValue();
     $item->price = $product->get('price')->getValue();
-    //$item->price = $product->get('sell_price');
+    $item->price = $product->get('sell_price');
     $item->weight = $product->get('weight')->getValue();
-    //$item->weight_units = $product->get('weight_units');
+    $item->weight_units = $product->get('weight_units');
     $item->shippable = $product->get('shippable')->getValue();
     $item->data = unserialize($item->data);
     $item->module = $item->data['module'];

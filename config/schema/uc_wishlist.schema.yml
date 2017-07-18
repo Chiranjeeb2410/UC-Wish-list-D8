@@ -3,7 +3,7 @@ uc_wishlist.settings:
   mapping:
     default_title:
       type: string
-      label: Default wish list title.
+      label: 'Default wish list title.'
     save_address:
       type: integer
       label: 'Permit a saved shipping address in a wishlist.'

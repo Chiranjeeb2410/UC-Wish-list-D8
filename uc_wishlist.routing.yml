@@ -22,7 +22,7 @@ uc_wishlist.admin_delete:
     _title: 'Delete a wish list'
     _form: '\Drupal\uc_wishlist\Form\UCWishlistAdminDeleteForm'
   requirements:
-    _permission: 'administer wish lists'
+    _permission: 'administer wish lists.'
   options:
     _admin_route: TRUE
 
@@ -32,7 +32,7 @@ uc_wishlist.wishlist:
     _title: 'My Wish list'
     _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::myWishlist'
   requirements:
-    _permission: 'Create wish lists'
+    _permission: 'Create wish lists.'
 
 uc_wishlist.wishlist_view:
   path: 'wishlist/{wid}'
@@ -40,5 +40,12 @@ uc_wishlist.wishlist_view:
     _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::viewWishlist'
     _title: 'View or modify the contents of your wish list.'
   requirements:
-    _permission: 'access wish lists'
+    _permission: 'access wish lists.'
 
+uc_wishlist.wishlist.search:
+  path: 'wishlist/search'
+  defaults:
+    _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::searchWishlist'
+    _title: 'Find a wish list.'
+  requirements:
+    _permission: 'search wish lists.'
