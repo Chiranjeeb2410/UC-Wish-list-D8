@@ -27,7 +27,7 @@ uc_wishlist.admin_delete:
     _admin_route: TRUE
 
 uc_wishlist.wishlist:
-  path: 'wishlist'
+  path: '/wishlist'
   defaults:
     _title: 'My Wish list'
     _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::myWishlist'
@@ -35,17 +35,42 @@ uc_wishlist.wishlist:
     _permission: 'Create wish lists.'
 
 uc_wishlist.wishlist_view:
-  path: 'wishlist/{wid}'
+  path: '/wishlist/{wid}'
   defaults:
     _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::viewWishlist'
     _title: 'View or modify the contents of your wish list.'
   requirements:
     _permission: 'access wish lists.'
 
-uc_wishlist.wishlist.search:
-  path: 'wishlist/search'
+entity.uc_wishlist.canonical:
+  path: '/wishlist/{wid}'
   defaults:
-    _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::searchWishlist'
-    _title: 'Find a wish list.'
+    _entity_list: 'uc_wishlist'
+    _title: 'Wish lists'
+    _form: '\Drupal\uc_wishlist\Controller\UCWishlistController::viewWishlist'
   requirements:
-    _permission: 'search wish lists.'
+    _permission: 'view wish lists'
+
+entity.uc_wishlist.collection:
+  path: '/admin/store/customers/wishlists'
+  defaults:
+    _entity_list: 'uc_wishlist'
+    _title: 'Wish lists'
+  requirements:
+    _permission: 'view wish lists'
+
+uc_wishlist.wishlist.search:
+  path: '/wishlist/search'
+  defaults:
+    _form: '\Drupal\uc_wishlist\Form\WishlistSearchForm'
+    _title: 'Find a wish list'
+  requirements:
+    _permission: 'access content'
+
+uc_wishlist.wishlist.email_form:
+  path: '/wishlist-email'
+  defaults:
+    _title: 'Wishlist email'
+    _form: '\Drupal\uc_wishlist\Form\WishlistEmailForm'
+  requirements:
+    _permission: 'access content'

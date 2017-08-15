@@ -4,22 +4,20 @@ namespace Drupal\uc_wishlist\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 
-/**
-* Email form for wishlist.
-*/
 class WishlistEmailForm extends FormBase {
 
-  public function getFormId(){
-    return 'uc_wishlistEmailForm';
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return 'email_form';
   }
 
-  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
-
-    $account = \Drupal::currentUser();
-    // TODO: Handle multiple wishlists?
-    $wid = uc_wishlist_get_wid($account->id());
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
 
     $form['subject'] = [
       '#type' => 'textfield',
@@ -40,31 +38,15 @@ class WishlistEmailForm extends FormBase {
       '#required' => TRUE,
       '#description' => $this->t('Enter Email Message.'),
     ];
-    $form['wid'] = [
-      '#type' => 'value',
-      '#value' => $wid,
-    ];
-    $form['submit'] = [
+
+    $form['actions']['#type'] = 'actions';
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Send'),
+      '#button_type' => 'primary',
     ];
-
-    parent::buildForm($form, $form_state);
     return $form;
   }
-
-  /**
-   * Validate function for the wishlist Email form use to send email.
-   *
-   * @param array $form
-   *   Form array.
-   *
-   * @param array $form_state
-   *   Formstate array contains the user submitted values.
-   *
-   * @return none
-   *   Returns nothing.
-   */
 
   public function validateForm(array &$form, FormStateInterface $form_state) {
 
@@ -73,6 +55,9 @@ class WishlistEmailForm extends FormBase {
     $emails = array_filter($emails);
     foreach ($emails as $email) {
       $email = trim($email);
+      if (strlen($form_state->getValue('recipients')) < 5) {
+        $form_state->setErrorByName('recipients', $this->t('Recipients field is required.'));
+      }
       if ($email != '' && !valid_email_address($email)) {
         // Generating error.
         $form_state->setError('emails', $this->t('%email is not a valid email address', ['%email' => $email]));
@@ -81,29 +66,22 @@ class WishlistEmailForm extends FormBase {
   }
 
   /**
-   * Submit callback for the wishlist Email form use to send email.
-   *
-   * @param array $form
-   *   Form array.
-   *
-   * @param array $form_state
-   *   Formstate array contains the user submitted values.
-   *
-   * @return none
-   *   Returns nothing.
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
+    /**$emails = explode(',', $form_state->getValue['recipients']);
+    $emails = array_filter($emails);
     // Getting subject of the mail and its sanitization.
     $subject = Html::escape($form_state->getValue['subject']);
     // Getting message of the mail and text sanitization.
     $message = check_markup($form_state->getValue['message']);
-    $wid = $form_state->getValue['wid'];
+    $wid = $form_state->getValue['id'];
     $message = $message . "\n" . l(t('Wishlist'), 'wishlist/' . $wid);
     foreach ($emails as $email) {
       uc_wishlist_send_mail($email, $subject, $message);
-    }
-    $form_state->setRedirect('uc_wishlist.user_wishlist_email');
+    }*/
+    drupal_set_message($this->t('Your wishlist has been emailed!', ['recipients' => $form_state->getValue('recipients')]));
+      $form_state->setRedirect('uc_wishlist.wishlist.email_form');
   }
 }
-

@@ -1,0 +1,5 @@
+uc_wishlist.tab_1:
+  route_name: uc_wishlist.wishlist.email_form
+  title: Email
+  base_route: uc_wishlist.wishlist.email_form
+  weight:
