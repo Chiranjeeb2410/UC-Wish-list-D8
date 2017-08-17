@@ -15,7 +15,7 @@ class DBQuery {
     $this->connection = $connection;
   }
 
-  public function getAllWishlist() {
+  public function getAllWishlist()   {
     $query = $this->connection->select('uc_wishlists', 'w');
     $query->leftJoin('users', 'u', 'w.uid = u.uid');
     $query->fields('w', [
@@ -56,6 +56,36 @@ class DBQuery {
   public function getWishlistItem($wid, $nid,$data) {
     $query = $this->connection->query("SELECT * FROM {uc_wishlist_products} WHERE wid = :wid AND nid = :nid AND data = :data", [':wid' => $wid, ':nid' => $nid, ':data' => serialize($data)]);
     return $query->fetchObject();
+  }
+
+  /**
+   *
+   */
+  public function searchUserWishlist($keywords) {
+    if (!empty($keywords)) {
+      // Check for user, wish list title, or address matches.
+      $query = $this->connection->select('uc_wishlists', 'w');
+      $query->join('users', 'u', 'w.uid = u.uid');
+      $query->fields('w', [
+          'wid',
+          'title',
+      ]);
+      $query->distinct();
+      $query->condition(db_or()
+        ->condition('u.name', '%' . $keywords . '%', 'LIKE')
+        ->condition('w.title', '%' . $keywords . '%', 'LIKE')
+        ->condition('w.address', '%' . $keywords . '%', 'LIKE'));
+    }
+    else {
+      $query = $this->connection->select('uc_wishlists', 'w');
+      $query->fields('w', [
+        'wid',
+        'title',
+      ]);
+    }
+    $query->condition('w.private', 0, '=');
+    $result = $query->orderBy('w.title')->execute; // $query->extend('PagerDefault')->limit(25)->execute();
+    return $result;
   }
 
   /**
