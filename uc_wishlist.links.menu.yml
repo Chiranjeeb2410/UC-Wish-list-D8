@@ -1,4 +1,4 @@
-uc_wishlist.settings:
+  uc_wishlist.settings:
   title: 'Wish list settings'
   route_name: uc_wishlist.config
   description: 'Configure the wish list settings.'
@@ -8,4 +8,21 @@ uc_wishlist.admin_wishlist:
   title: 'Wish lists'
   route_name: uc_wishlist.admin_wishlist
   description: 'Manage user wish lists.'
+  parent: uc_wishlist.admin.store.customers
+
+uc_wishlist.wishlist:
+  title: 'Wishlist'
+  route_name: uc_wishlist.wishlist
+  description: 'Access wish lists'
+  parent: uc_wishlist.wishlist
+
+uc_wishlist.wishlist.search:
+  title: 'Find a wish list'
+  route_name: uc_wishlist.wishlist.search
+  description: 'Search wish list'
+
+uc_wishlist.user_settings:
+  title: 'User wish list settings'
+  route_name: uc_wishlist.user_settings
+  description: 'Configure user wish list settings'
   parent: uc_wishlist.admin.store.customers
