@@ -87,9 +87,9 @@ uc_wishlist.wishlist.email_form:
 uc_wishlist.user_settings:
   path: '/admin/store/config/user-settings'
   defaults:
-    _form: '\Drupal\uc_wishlist\Form\WishlistSettingsForm'
+    _form: '\Drupal\uc_wishlist\Form\UserWishlistSettingsForm'
     _title: 'User wish list settings'
   requirements:
-    _permission: 'Administer wish list settings.'
+    _permission: 'Administer user wishlist settings.'
   options:
     _admin_route: TRUE

@@ -6,9 +6,10 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * @file contains user wishlist settings.
+ * @file contains user wishlist settings to extend the
+ * user with the option to modify/update a wish list.
  */
-class WishlistSettingsForm extends ConfigFormBase {
+class UserWishlistSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
@@ -29,47 +30,48 @@ class WishlistSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('uc_product.settings');
+    $wid = $form_state->getValues('id');
     $wishlist = uc_wishlist_load($wid);
 
     $account = \Drupal::currentUser();
 
     $form = [];
 
-    $form['wishlist'] = array(
+    $form['wishlist'] = [
       '#type' => 'fieldset',
-    );
-    $form['wishlist']['wid'] = array(
+    ];
+    $form['wishlist']['wid'] = [
       '#type' => 'hidden',
       '#value' =>   $wishlist->wid,
-    );
-    $form['wishlist']['title'] = array(
+    ];
+    $form['wishlist']['title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Title'),
       '#default_value' => $wishlist->title,
       '#required' => TRUE,
-    );
-    $form['wishlist']['expiration'] = array(
+    ];
+    $form['wishlist']['expiration'] = [
       '#type' => 'date',
       '#title' => $this->t('Event or expiration date'),
       '#default_value' => $expiration,
       '#description' => $this->t('If this wish list is associated with an event or will no longer be relevant on a specific date, enter it here.'),
-    );
+    ];
 
     if (!$config->get('default_private', TRUE) && $config->get('allow_private', TRUE)) {
-      $form['wishlist']['private'] = array(
+      $form['wishlist']['private'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Private'),
         '#default_value' => $wishlist->private,
         '#description' => $this->t('Check this to make your wish list private and exclude it from wish list search results.'),
-      );
+      ];
     }
 
     if ($config->get('save_address', TRUE)) {
-      $form['wishlist']['address'] = array(
+      $form['wishlist']['address'] = [
         '#type' => 'fieldset',
         '#title' => $this->t('Mailing address'),
         '#description' => $this->t('The address you enter here will be available as a shipping address to anyone who purchases an item from your wish list.'),
-      );
+      ];
 
       /**
        *if (($account->id()) {
@@ -100,14 +102,14 @@ class WishlistSettingsForm extends ConfigFormBase {
         $form['wishlist']['address']['delivery_city'] = uc_textfield(uc_get_field_name('city'), empty($wishlist->address->city) ? NULL : $wishlist->address->city, uc_address_field_required('city'));
       }
       if (uc_address_field_enabled('country')) {
-        $form['wishlist']['address']['delivery_country'] = array(
+        $form['wishlist']['address']['delivery_country'] = [
           '#type' => 'select',
           '#title' => uc_get_field_name('country'),
           '#description' => NULL,
           '#required' => uc_address_field_required('country'),
           '#options' => uc_country_option_list(),
           '#default_value' => isset($wishlist->address->country) ? $wishlist->address->country : uc_store_default_country(),
-        );
+        ];
       }
       if (uc_address_field_enabled('zone')) {
         if (isset($_POST['delivery_country'])) {
@@ -116,7 +118,7 @@ class WishlistSettingsForm extends ConfigFormBase {
         else {
           $country_id = isset($wishlist->address->country) ? $wishlist->address->country : uc_store_default_country();
         }
-        $form['wishlist']['address']['delivery_zone'] = uc_zone_select(uc_get_field_name('zone'), empty($wishlist->address->zone) ? NULL : $wishlist->address->zone, $country_id, array('required' => uc_address_field_required('zone')));
+        $form['wishlist']['address']['delivery_zone'] = uc_zone_select(uc_get_field_name('zone'), empty($wishlist->address->zone) ? NULL : $wishlist->address->zone, $country_id, ['required' => uc_address_field_required('zone')]);
         if (isset($_POST['panes']) && count($form['wishlist']['address']['delivery_zone']['#options']) == 1) {
           $form['wishlist']['address']['delivery_zone']['#required'] = FALSE;
         }
@@ -129,10 +131,10 @@ class WishlistSettingsForm extends ConfigFormBase {
       }
     }
 
-    $form['wishlist']['save'] = array(
+    $form['wishlist']['save'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save settings'),
-    );
+    ];
 
     return $form;
 
@@ -169,14 +171,14 @@ class WishlistSettingsForm extends ConfigFormBase {
       $address = [
         'firstname' => $form_state->getValues['delivery_first_name'],
         'lastname' => $form_state->getValues['delivery_last_name'],
-        'company' => empty($form_state->getValues['delivery_company']) ? '' : $form_state->getValues['delivery_company'],
+        'company' => $form_state->isValueEmpty['delivery_company'] ? '' : $form_state->getValues['delivery_company'],
         'addr1' => $form_state->getValues['delivery_street1'],
-        'addr2' => empty($form_state->getValues['delivery_street2']) ? '' : $form_state->getValues['delivery_street2'],
+        'addr2' => $form_state->isValueEmpty['delivery_street2'] ? '' : $form_state->getValues['delivery_street2'],
         'city' => $form_state->getValues['delivery_city'],
         'country' => $form_state->getValues['delivery_country'],
         'zone' => $form_state->getValues['delivery_zone'],
         'postcode' => $form_state->getValues['delivery_postal_code'],
-        'phone' => empty($form_state->getValues['delivery_phone']) ? '' : $form_state->getValues['delivery_phone'],
+        'phone' => $form_state->isValueEmpty['delivery_phone'] ? '' : $form_state->getValues['delivery_phone'],
       ];
     }
 
