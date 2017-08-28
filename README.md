@@ -1,7 +1,8 @@
 Google Summer of Code 2017 | Drupal
+
 Student: Chiranjeeb Mahanta (musk_1107)
+
 Mentor: Naveen Valecha (naveenvalecha)
-Student: Chiranjeeb Mahanta (chiranjeeb2410)
 
 Project Overview:
 
