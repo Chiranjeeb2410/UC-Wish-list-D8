@@ -1,0 +1,4 @@
+services:
+  uc_wishlist.manager:
+    class: Drupal\uc_wishlist\Database\UcWishlistManager
+    arguments: ['@database']
