@@ -6,44 +6,68 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\user\Entity\User;
-use Drupal\uc_wishlist\Database;
+use Drupal\uc_wishlist\Database\UcWishlistManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Controller routines for Uc wishlist.
+ */
 class UCWishlistController extends ControllerBase {
 
-  protected $db;
+  /**
+   * The Database UcWishlistManager class.
+   *
+   * @var \Drupal\uc_wishlist\Database\UcWishlistManager
+   */
+  protected $wishlistManager;
 
   /**
+   * Constructs a UCWishlistController object.
    *
+   * @param \Drupal\uc_wishlist\Database\UcWishlistManager $wishlist_manager
+   *   The wishlistManager object.
    */
-  public function __construct() {
-    $this->db = new Database\DBQuery(\Drupal::database());
+  public function __construct(UcWishlistManager $wishlist_manager) {
+    $this->wishlistManager = $wishlist_manager;
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
-  public function AdminWishlist() {
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('uc_wishlist.manager')
+    );
+  }
+
+  /**
+   * Returns a list of user wish lists.
+   *
+   * @return array
+   *   a paged list of wish lists.
+   */
+  public function adminWishlist() {
     $rows = [];
 
     $header = [
             [
-                'data' => t('User'),
-                'field' => 'u.name',
-                'sort' => 'asc',
+              'data' => t('User'),
+              'field' => 'u.name',
+              'sort' => 'asc',
             ],
             [
-                'data' => t('Title'),
-                'field' => 'w.title',
+              'data' => t('Title'),
+              'field' => 'w.title',
             ],
             [
-                'data' => t('Expiration date'),
-                'field' => 'w.expiration',
+              'data' => t('Expiration date'),
+              'field' => 'w.expiration',
             ],
             ['data' => t('Status')],
     ];
 
     // Database returns a paged list of wish lists.
-    $result = $this->db->getAllWishlist();
+    $result = $this->wishlistManager->getAllWishlist();
 
     foreach ($result as $wishlist) {
 
@@ -53,13 +77,13 @@ class UCWishlistController extends ControllerBase {
       ];
       $deleteUrl->setOptions($link_options);
 
-      //wishlist expiration status
+      // Wishlist expiration status.
       $expired = '';
       if ($wishlist->expiration < REQUEST_TIME) {
         $expired = t('Expired');
       }
-      elseif($wishlist->expiration > 0) {
-         $expired = t('Active');
+      elseif ($wishlist->expiration > 0) {
+        $expired = t('Active');
       }
       $deleteUrl = Link::fromTextAndUrl($expired . ' | Delete', $deleteUrl)->toString();
       $account = User::load($wishlist->uid);
@@ -69,26 +93,26 @@ class UCWishlistController extends ControllerBase {
         Link::fromTextAndUrl($wishlist->title, Url::fromRoute('uc_wishlist.wishlist_view', ['wid' => $wishlist->wid]))->toString(),
         \Drupal::service('date.formatter')->format($wishlist->expiration),
         $deleteUrl,
-        ];
+      ];
     }
 
-      if (empty($rows)) {
-        $rows[] = [
+    if (empty($rows)) {
+      $rows[] = [
           [
             'data'    => t('No wish lists found'),
             'colspan' => 4,
           ],
-        ];
-      }
-      return [
-            '#theme' => 'table',
-            '#header' => $header,
-            '#rows' => $rows
       ];
+    }
+    return [
+      '#theme' => 'table',
+      '#header' => $header,
+      '#rows' => $rows,
+    ];
   }
 
   /**
-   *
+   * Allows user to view a wish list after adding required products.
    */
   public function viewWishlist($wid = NULL) {
     $render = [];
@@ -100,7 +124,7 @@ class UCWishlistController extends ControllerBase {
     if (!$own && $wid == uc_wishlist_get_wid()) {
       return $this->redirect('uc_wishlist.wishlist');
     }
-    // load the wish list.
+    // Load the wish list.
     $wishlist = uc_wishlist_load($wid);
 
     // Handle a non-existent wish list.
@@ -110,33 +134,33 @@ class UCWishlistController extends ControllerBase {
       drupal_set_message($this->t('The wish list you requested could not be found. Perhaps you can try looking for it through the wish list search form below.'));
       return $this->redirect('uc_wishlist.wishlist.search');
     }
-    // Display only if the users wishlist is not set to private
+    // Display only if the users wishlist is not set to private.
     if (!$wishlist->private) {
 
-      //Set the title to the wishlist title
+      // Set the title to the wishlist title.
       $title = $wishlist->title;
-      //adding expiration info to display
+      // Adding expiration info to display.
       if ($wishlist->expiration < REQUEST_TIME) {
-        $output .= '<p>' . $this->t('This wish list may no longer be valid. It was for an event on @date.', array('@date' => \Drupal::service('date.formatter')->format($wishlist->expiration))) . '</p>';
+        $output .= '<p>' . $this->t('This wish list may no longer be valid. It was for an event on @date.', ['@date' => \Drupal::service('date.formatter')->format($wishlist->expiration)]) . '</p>';
       }
       elseif ($wishlist->expiration > 0) {
-        $output .= '<p>' . $this->t('This wish list is valid until @date.', array('@date' => \Drupal::service('date.formatter')->format($wishlist->expiration))) . '</p>';
+        $output .= '<p>' . $this->t('This wish list is valid until @date.', ['@date' => \Drupal::service('date.formatter')->format($wishlist->expiration)]) . '</p>';
       }
 
       $items = uc_wishlist_get_contents($wid);
 
       if (empty($items)) {
-        //@TODO: add the users name to the output string
+        // @TODO: add the users name to the output string
         $output = '<p>There are no products in this wish list.</p>';
-        //return $render;
+        // Return $render;.
       }
       else {
-        $form = \Drupal::formBuilder()->getForm('Drupal\uc_wishlist\Form\WishlistViewForm', $items, $wid, false);
+        $form = \Drupal::formBuilder()->getForm('Drupal\uc_wishlist\Form\WishlistViewForm', $items, $wid, FALSE);
         $rendered_wishlistview_form = \Drupal::service('renderer')->render($form);
       }
     }
     else {
-      drupal_set_message($this->t('This users wish list is set to private. You may search for another user\'s wish list below.'));
+      drupal_set_message($this->t("This users wish list is set to private. You may search for another user's wish list below."));
       return $this->redirect('uc_wishlist.wishlist.search');
     }
     $render['#theme'] = 'uc_wishlist_view_wishlist';
@@ -150,12 +174,12 @@ class UCWishlistController extends ControllerBase {
   }
 
   /**
-   *
+   * Loads the user wish list page.
    */
   public function myWishlist() {
-    //setup our render array for all our page variables and configurations
+    // Setup our render array for all our page variables and configurations.
     $render = [];
-    //get the wishlist id based off of the current users id
+    // Get the wishlist id based off of the current users id.
     $wid = uc_wishlist_get_wid();
     // Attempt to load the wish list.
     $wishlist = uc_wishlist_load($wid);
@@ -170,12 +194,12 @@ class UCWishlistController extends ControllerBase {
     }
     $title = 'My Wish List';
 
-    //Adding expiration info to display
+    // Adding expiration info to display.
     if ($wishlist->expiration < REQUEST_TIME) {
-      $output .= '<p>' . $this->t('This wish list may no longer be valid. It was for an event on @date.', array('@date' => \Drupal::service('date.formatter')->format($wishlist->expiration))) . '</p>';
+      $output .= '<p>' . $this->t('This wish list may no longer be valid. It was for an event on @date.', ['@date' => \Drupal::service('date.formatter')->format($wishlist->expiration)]) . '</p>';
     }
     elseif ($wishlist->expiration > 0) {
-      $output .= '<p>' . $this->t('This wish list is valid until @date.', array('@date' => \Drupal::service('date.formatter')->format($wishlist->expiration))) . '</p>';
+      $output .= '<p>' . $this->t('This wish list is valid until @date.', ['@date' => \Drupal::service('date.formatter')->format($wishlist->expiration)]) . '</p>';
     }
 
     $items = uc_wishlist_get_contents($wid);
@@ -185,7 +209,7 @@ class UCWishlistController extends ControllerBase {
       return $render;
     }
 
-    $form = \Drupal::formBuilder()->getForm('Drupal\uc_wishlist\Form\WishlistViewForm', $items, $wid, true);
+    $form = \Drupal::formBuilder()->getForm('Drupal\uc_wishlist\Form\WishlistViewForm', $items, $wid, TRUE);
     $rendered_wishlistview_form = \Drupal::service('renderer')->render($form);
     $render['#theme'] = 'uc_wishlist_view_wishlist';
     $render['#type'] = 'theme';
@@ -195,15 +219,5 @@ class UCWishlistController extends ControllerBase {
     $render['#wishlist'] = $wishlist;
     return $render;
   }
-
-
-  /**
-   *
-   */
-  public function userWishlist($user) {
-    return [];
-  }
-
-
 
 }

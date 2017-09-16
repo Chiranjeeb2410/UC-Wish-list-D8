@@ -1,12 +1,8 @@
 uc_wishlist.user_settings:
   route_name: uc_wishlist.user_settings:
   title: 'User wish list settings'
-  base_route: uc_wishlist.admin.store.customers
-  weight: 10
 
-uc_wishlist.wishlist_email:
+uc_wishlist.email:
   route_name: uc_wishlist.wishlist.email_form
   title: 'Wishlist-Email'
   base_route: uc_wishlist.wishlist
-  weight: 20
-

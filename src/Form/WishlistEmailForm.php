@@ -5,6 +5,12 @@ namespace Drupal\uc_wishlist\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Creates the WishlistEmailForm class.
+ *
+ * Allows a user to email a specific wish
+ * list to another user/recipient.
+ */
 class WishlistEmailForm extends FormBase {
 
   /**
@@ -48,6 +54,9 @@ class WishlistEmailForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state) {
 
     // Exploding the emails id of the recpients.
@@ -79,9 +88,10 @@ class WishlistEmailForm extends FormBase {
     $wid = $form_state->getValue['id'];
     $message = $message . "\n" . l(t('Wishlist'), 'wishlist/' . $wid);
     foreach ($emails as $email) {
-      uc_wishlist_send_mail($email, $subject, $message);
+    uc_wishlist_send_mail($email, $subject, $message);
     }*/
     drupal_set_message($this->t('Your wishlist has been emailed!', ['recipients' => $form_state->getValue('recipients')]));
-      $form_state->setRedirect('uc_wishlist.wishlist.email_form');
+    $form_state->setRedirect('uc_wishlist.wishlist.email_form');
   }
+
 }

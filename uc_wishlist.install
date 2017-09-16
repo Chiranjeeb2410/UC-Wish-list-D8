@@ -2,8 +2,9 @@
 
 /**
  * @file
- * uc_wishlist installation routine. Creates uc_wishlists and
- * uc_wishlist_products tables.
+ * Uc_wishlist installation routine.
+ *
+ * Creates uc_wishlists and uc_wishlist_products tables.
  */
 
 /**
@@ -53,7 +54,7 @@ function uc_wishlist_schema() {
       ],
     ],
     'indexes' => [
-       'uid' => ['uid'],
+      'uid' => ['uid'],
     ],
     'primary key' => ['wid'],
   ];
@@ -111,16 +112,4 @@ function uc_wishlist_schema() {
   ];
 
   return $schema;
-}
-
-/**
- * Replaced the anonymous configuration settings with 'create wish lists'
- * permissions.
- */
-function uc_wishlist_update_7001() {
-  $allow_anonymous = \Drupal::config()->get('uc_wishlist_allow_anonymous', FALSE);
-  if ($allow_anonymous) {
-    user_role_change_permissions(DRUPAL_ANONYMOUS_RID, ['create wish lists' => TRUE]);
-  }
-  variable_del('uc_wishlist_allow_anonymous');
 }

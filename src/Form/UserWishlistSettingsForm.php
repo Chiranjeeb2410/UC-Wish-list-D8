@@ -4,12 +4,42 @@ namespace Drupal\uc_wishlist\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @file contains user wishlist settings to extend the
+ * Constructs the UserWishlistSettingsForm class.
+ *
+ * Contains user wishlist settings to extend the
  * user with the option to modify/update a wish list.
  */
 class UserWishlistSettingsForm extends ConfigFormBase {
+
+  /**
+   * Defines an object that has a user id, roles and can have session data.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $account;
+
+  /**
+   * Defines an account interface which represents the current user.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Interface implemented both by the global session and the user entity.
+   */
+  public function __construct(AccountInterface $account) {
+    $this->account = $account;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('current_user')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -29,11 +59,9 @@ class UserWishlistSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('uc_product.settings');
+    $config = $this->config('uc_wishlist.settings');
     $wid = $form_state->getValues('id');
     $wishlist = uc_wishlist_load($wid);
-
-    $account = \Drupal::currentUser();
 
     $form = [];
 
@@ -42,7 +70,7 @@ class UserWishlistSettingsForm extends ConfigFormBase {
     ];
     $form['wishlist']['wid'] = [
       '#type' => 'hidden',
-      '#value' =>   $wishlist->wid,
+      '#value' => $wishlist->wid,
     ];
     $form['wishlist']['title'] = [
       '#type' => 'textfield',
@@ -73,16 +101,15 @@ class UserWishlistSettingsForm extends ConfigFormBase {
         '#description' => $this->t('The address you enter here will be available as a shipping address to anyone who purchases an item from your wish list.'),
       ];
 
-      /**
-       *if (($account->id()) {
-         $addresses = uc_select_address(($account->id()), 'delivery', 'apply_address(\'delivery\', this.value);', t('Saved addresses'), TRUE);
-          if (!empty($addresses)) {
-            $form['wishlist']['address']['delivery_address_select'] = $addresses;
-            unset($form['wishlist']['address']['delivery_address_select']['#suffix']);
-          }
-       }
-       */
-
+      // If (($account->id()) {
+      // $addresses = uc_select_address(($account->id()), 'delivery',
+      // 'apply_address(\'delivery\', this.value);', t('Saved addresses'),
+      // TRUE);
+      // if (!empty($addresses)) {
+      // $form['wishlist']['address']['delivery_address_select'] = $addresses;
+      // unset($form['wishlist']['address']['delivery_address_select']['#suffix']);
+      // }
+      // };
       if (uc_address_field_enabled('first_name')) {
         $form['wishlist']['address']['delivery_first_name'] = uc_textfield(uc_get_field_name('first_name'), empty($wishlist->address->firstname) ? NULL : $wishlist->address->firstname, uc_address_field_required('first_name'));
       }
@@ -145,17 +172,16 @@ class UserWishlistSettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
 
-    $account = \Drupal::currentUser();
     $wid = $form_state->getValues('id');
 
     $wishlist = uc_wishlist_load($wid);
     if (!$wishlist) {
-      drupal_set_message(t('Could not find the specified wish list.'), 'error');
-      return false;
+      drupal_set_message($this->t('Could not find the specified wish list.'), 'error');
+      return FALSE;
     }
-    if ($wishlist->id() != $account->id() && !$account->hasPermission('administer store')) {
-      drupal_set_message(t('You do not have permission to edit this wish list.'), 'error');
-      return false;
+    if ($wishlist->id() != $this->account->id() && !$this->account->hasPermission('administer store')) {
+      drupal_set_message($this->t('You do not have permission to edit this wish list.'), 'error');
+      return FALSE;
     }
   }
 
@@ -163,7 +189,7 @@ class UserWishlistSettingsForm extends ConfigFormBase {
    * Submission handler for wish list settings form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $expiration = mktime(0, 0, 0, $form_state->getValue(['expiration','month']), $form_state->getValue(['expiration','day']), $form_state>getValue(['expiration','year']));
+    $expiration = mktime(0, 0, 0, $form_state->getValue(['expiration', 'month']), $form_state->getValue(['expiration', 'day']), $form_state > getValue(['expiration', 'year']));
     $values = $form_state->getValues();
     $config = $this->config('uc_wishlist.settings');
 
@@ -188,8 +214,7 @@ class UserWishlistSettingsForm extends ConfigFormBase {
 
     $private = $config->get('default_private', FALSE) ? $config->get('default_private', FALSE) : 0;
     $private = $config->get('allow_private', FALSE) ? $form_state->getValues['private'] : $private;
-    uc_wishlist_update_wishlist($form_state->getValues['wid'], $form_state->getValues['title'], $expiration, (object) $address, $private);
-    drupal_set_message(t('Your wish list has been updated.'));
+    drupal_set_message($this->t('Your wish list has been updated.'));
   }
-}
 
+}

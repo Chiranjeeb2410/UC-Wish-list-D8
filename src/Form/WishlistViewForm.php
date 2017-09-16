@@ -7,31 +7,55 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Drupal\uc_wishlist\Database\UcWishlistManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Creates the WishlistViewForm class.
+ *
+ * Allows a user to view/update a specific wish
+ * list.
+ */
 class WishlistViewForm extends FormBase {
 
-  protected $database;
-
-  //public function __construct()
-//  {
-  //  $this->database = new \Drupal::database();
-  //}
   /**
    * {@inheritdoc}
    */
-  public function getFormId(){
+  protected $ucwishlistManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(UcWishlistManager $ucwishlist_manager) {
+    $this->ucwishlistManager = $ucwishlist_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('uc_wishlist.manager')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
     return 'uc_wishlistViewForm';
   }
+
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $items = null, $wid = null, $own = null){
+  public function buildForm(array $form, FormStateInterface $form_state, $items = NULL, $wid = NULL, $own = NULL) {
     $form['items'] = [
       '#tree' => TRUE,
 
     ];
 
-    $form['#attached']['library'][] = 'uc_wishlist/ideal_image_slider';
     $form['#attached']['library'][] = 'uc_wishlist/default';
     $sliderNumber = 1;
     // Load each wish list product and add it to the form array.
@@ -40,7 +64,7 @@ class WishlistViewForm extends FormBase {
       $node = Node::load($item->nid);
       $element = [
         '#prefix' => '<div class="uc_wishlist_product_item">',
-        '#suffix' => '</div>'
+        '#suffix' => '</div>',
       ];
 
       $element['nid'] = [
@@ -59,7 +83,7 @@ class WishlistViewForm extends FormBase {
       if ($own) {
         $element['remove'] = [
           '#type' => 'checkbox',
-          '#title' => 'Remove'
+          '#title' => 'Remove',
         ];
       }
 
@@ -70,33 +94,31 @@ class WishlistViewForm extends FormBase {
 
       $element['title'] = [
         '#type' => 'item',
-        '#markup' => Link::fromTextAndUrl($item->title, Url::fromRoute('entity.node.canonical', ['node'=>$node->id()]))->toString(),
+        '#markup' => Link::fromTextAndUrl($item->title, Url::fromRoute('entity.node.canonical', ['node' => $node->id()]))->toString(),
       ];
-      $imagesFound = false;
+      $imagesFound = FALSE;
       $imageUrls = [];
       $numberOfImages = 0;
-      while(!$imagesFound)
-      {
-        if($node->get('uc_product_image')[$numberOfImages] != null) {
+      while (!$imagesFound) {
+        if ($node->get('uc_product_image')[$numberOfImages] != NULL) {
           $imageUrls[] = $node->get('uc_product_image')[$numberOfImages]->entity->url();
           $numberOfImages = $numberOfImages + 1;
         }
         else {
-          $imagesFound = true;
+          $imagesFound = TRUE;
           break;
         }
       }
       $element['images'] = [
-        '#tree'=>true,
-        '#prefix' => '<div id="wishlist_image_container"> <div class="wishlist_slider" id="wishlist_slider_'.$sliderNumber.'" style="width:150px;height:150px;" class="uc_wishlist_product_images">',
-        '#suffix' => '</div></div>'
+        '#tree' => TRUE,
+        '#prefix' => '<div id="wishlist_image_container"> <div class="wishlist_slider" id="wishlist_slider_' . $sliderNumber . '" style="width:150px;height:150px;" class="uc_wishlist_product_images">',
+        '#suffix' => '</div></div>',
       ];
       $sliderNumber++;
-      foreach($imageUrls as $key=>$value)
-      {
-        $element['images']['image_'.$key] = [
+      foreach ($imageUrls as $key => $value) {
+        $element['images']['image_' . $key] = [
           '#type' => 'item',
-          '#markup' => '<img alt="test" class="uc_wishlistProductImage" src="'.$value.'" width="150" height="150" />',
+          '#markup' => '<img alt="test" class="uc_wishlistProductImage" src="' . $value . '" width="150" height="150" />',
           '#theme_wrappers' => [],
 
         ];
@@ -105,12 +127,10 @@ class WishlistViewForm extends FormBase {
       $description = $node->get('body')->getValue();
 
       // Now allow alterations via hook_uc_product_description_alter().
-
       if ($description) {
         $element['description'] = [
           '#type' => 'item',
-          //'#title' => 'Product Description',
-          '#markup' => mb_strimwidth($description[0]['value'],0,50,'...'.Link::fromTextAndUrl('More', Url::fromRoute('entity.node.canonical', ['node'=>$node->id()]))->toString()),
+          '#markup' => mb_strimwidth($description[0]['value'], 0, 50, '...' . Link::fromTextAndUrl('More', Url::fromRoute('entity.node.canonical', ['node' => $node->id()]))->toString()),
         ];
       }
 
@@ -119,51 +139,45 @@ class WishlistViewForm extends FormBase {
         '#value' => $form_state->get('variant') ?: $node,
       ];
 
-      //$element['#total'] = $item->price; //* $item->qty;
-
       $element['data'] = [
         '#type' => 'hidden',
         '#value' => serialize($item->data),
       ];
-      if($own) {
+      if ($own) {
         $element['wanted_qty'] = [
           '#type' => 'uc_quantity',
           '#title' => 'Wanted Quantity',
-          '#default_value' => $item->qty
+          '#default_value' => $item->qty,
         ];
       }
       else {
         $element['wanted_qty'] = [
           '#type' => 'item',
           '#title' => 'Wanted Quantity',
-          '#markup' => '<p class="wanted_quantity">'.$item->qty.'</p>'
+          '#markup' => '<p class="wanted_quantity">' . $item->qty . '</p>',
         ];
       }
       $price = $node->get('price')->getValue()[0]['value'];
       $element['total_price'] = [
-        '#type'=>'item',
-        '#title'=>'Price for wanted quantity',
-        '#markup'=>'<p class="total_price"$>'.floatval ($price)*$item->qty.'</p>',
+        '#type' => 'item',
+        '#title' => 'Price for wanted quantity',
+        '#markup' => '<p class="total_price"$>' . floatval($price) * $item->qty . '</p>',
       ];
       $element['qty'] = [
         '#type' => 'uc_quantity',
         '#title' => 'Your Quantity',
-        '#default_value' => '1'
+        '#default_value' => '1',
       ];
       $element['price'] = [
-        '#type'=>'item',
-        '#title'=>'Your Price',
-        '#markup'=>'<p class="price">$'.floatval ($price).'</p>',
+        '#type' => 'item',
+        '#title' => 'Your Price',
+        '#markup' => '<p class="price">$' . floatval($price) . '</p>',
       ];
-
-
 
       // Checking if uc_stock module is install in the site and
       // prevent user to add product into cart if the stock value of the product
       // is equal to 0.
-
       // Checking if uc_stock module install in the site.
-
       if (\Drupal::moduleHandler()->moduleExists('uc_stock')) {
 
         // If product kit module is installed in the site and wishlist node type
@@ -171,9 +185,8 @@ class WishlistViewForm extends FormBase {
         if (\Drupal::moduleHandler()->moduleExists('uc_product_kit') && $node->get('type')->getValue() == 'product_kit') {
 
           // Getting the number of products attached with the Product Kit.
-          // As there is no stock configuration, so we will check the stock value
+          // As there is no stock configuration, so we check the stock value
           // of the each product of Product Kit.
-
           // If all products of the Product Kit has stock active, then we allow
           // user to purchase product kit.
           // @var unknown_type .
@@ -204,7 +217,7 @@ class WishlistViewForm extends FormBase {
             '#type' => 'submit',
             '#name' => 'addcart-' . $itemNum,
             '#value' => 'Add to cart',
-            '#submit' => ['addToCart']
+            '#submit' => ['addToCart'],
           ];
 
         }
@@ -221,7 +234,7 @@ class WishlistViewForm extends FormBase {
           '#type' => 'submit',
           '#name' => 'addcart-' . $itemNum,
           '#value' => 'Add to cart',
-          '#submit' => ['addToCart']
+          '#submit' => ['addToCart'],
         ];
       }
       $itemNum++;
@@ -241,7 +254,7 @@ class WishlistViewForm extends FormBase {
       ];
       $form['update'] = [
         '#type' => 'submit',
-        '#attributes' => array('class'=> array('uc_wishlist_update_wishlist')),
+        '#attributes' => ['class' => ['uc_wishlist_update_wishlist']],
         '#name' => 'uc_wishlist_update_wishlist',
         '#value' => 'Update wish list',
       ];
@@ -260,36 +273,31 @@ class WishlistViewForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state){
+  public function submitForm(array &$form, FormStateInterface $form_state) {
 
     $values = $form_state->getValues();
-    //get the products post data and iterate them to update one by one
+    // Get the products post data and iterate them to update one by one.
     $items = $values['items'];
-    foreach($items as $item)
-    {
+    foreach ($items as $item) {
       $wpid = $item['wpid'];
       $remove = $item['remove'];
       $node = Node::load($item['nid']);
       $title = $node->get('title')->getValue()[0]['value'];
       $title = Xss::filter($title);
 
-      //check to see if the user wanted to remove this product from the wish list and if so then delete it
-      if($remove)
-      {
-        $this->database->remove_item($wpid);
-        drupal_set_message($this->t('<b>@product_title</b> has been removed from <a href="@url">your wish list</a>.',['@product_title'=>$title,'@url'=>Url::fromRoute('uc_wishlist.wishlist')]));
+      // Delete a product from wish list if user wants to get it removed.
+      if ($remove) {
+        drupal_set_message($this->t('<b>@product_title</b> has been removed from <a href="@url">your wish list</a>.', ['@product_title' => $title, '@url' => Url::fromRoute('uc_wishlist.wishlist')]));
       }
       else {
-        //update the information for this product in the wish list
-        //user wanted quantity of the product
+        // Update the information for this product in the wish list
+        // user wanted quantity of the product.
         $wanted_qty = $item['wanted_qty'];
-        //dpm($wpid);
-        //drupal_set_message($this->t('<b>@product_title</b> \'Wanted Quantity\' has been updated. <a href="@url">your wish list</a>.',['@product_title'=>$title,'@url'=>Url::fromRoute('uc_wishlist.wishlist')]));
-        $database = new \Drupal\uc_wishlist\Database\DBQuery(\Drupal::database());
-        $database->updateWantedQuantity($wpid,$wanted_qty);
+        $this->ucwishlistManager->updateWantedQuantity($wpid, $wanted_qty);
       }
     }
     drupal_set_message($this->t('Your wish list has been updated'));
     $form_state->setRedirectUrl(Url::fromRoute('uc_wishlist.wishlist'));
   }
+
 }

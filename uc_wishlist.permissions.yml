@@ -1,13 +1,12 @@
 administer wish lists:
   title: 'Administer wish lists'
-  description: 'Allows editing or deletion of any wish list.'
+  description: 'Provides permission to configure and administer specific wish list settings.'
 create wish lists:
   title: 'Create wish lists'
-  description: 'Allow creation and editing of own wish list.'
+  description: 'Allows the creation and editing of a personal wish list.'
 access wish lists:
   title: 'Access wish lists'
-  description: 'Allow viewing of any wish list.'
+  description: 'Allows the viewing of any wish list.'
 email wish lists:
   title: 'Email own wish list'
-  description: 'Allow Email own wish list'
-
+  description: 'Allows the provision of mailing a pesonal wish list.'

@@ -2,23 +2,46 @@
 
 namespace Drupal\uc_wishlist\Form;
 
-use Drupal\uc_wishlist\Database\DBQuery;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Utility\Xss;
-use Drupal\User\Entity;
+use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Creates the WishlistSearchForm class.
+ *
+ * Allows a user to search for any specific wish
+ * list.
+ */
 class WishlistSearchForm extends FormBase {
 
-  //protected $database;
+  /**
+   * Defines an object that has a user id, roles and can have session data.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $account;
 
   /**
-   *public function __construct() {
-      $this->db = new Database\DBQuery(\Drupal::database());
-    }
+   * Defines an account interface which represents the current user.
    *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Interface implemented both by the global session and the user entity.
    */
+  public function __construct(AccountInterface $account) {
+    $this->account = $account;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('current_user')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -32,20 +55,7 @@ class WishlistSearchForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $account = \Drupal::currentUser();
-    //$user = User::load($account->id());
     $form = [];
-
-    /**
-     * if (!$account->id() && !$account->hasPermission('create wish lists')) {
-         $path = 'user';
-         $query = ['destination' => 'wishlist'];
-        }
-    $form['wishlist_link'] = [
-      '#type' => 'item',
-      '#markup' => '<div>' . l(t('Create or manage your wish list.'), $path, array('query' => $query)) . '</div>',
-    ];
-    */
 
     $form['search'] = [
       '#type' => 'fieldset',
@@ -63,15 +73,6 @@ class WishlistSearchForm extends FormBase {
 
     $links = [];
 
-    //$result = $this->db->searchUserWishlist($keywords);
-
-    foreach ($result as $wishlist) {
-      $links[] = [
-        'title' => Xss::filter($wishlist->title, []),
-        'href' => 'wishlist/' . $wishlist->wid,
-      ];
-    }
-
     if (!empty($links)) {
       $output = [
         'links' => $links,
@@ -84,7 +85,6 @@ class WishlistSearchForm extends FormBase {
     else {
       $output = ' ' . t('No wish lists found.');
     }
-
 
     $form['output'] = [
       '#type' => 'item',
@@ -107,4 +107,5 @@ class WishlistSearchForm extends FormBase {
     }
 
   }
+
 }

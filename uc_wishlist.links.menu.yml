@@ -14,7 +14,6 @@ uc_wishlist.wishlist:
   title: 'Wishlist'
   route_name: uc_wishlist.wishlist
   description: 'Access wish lists'
-  parent: uc_wishlist.wishlist
 
 uc_wishlist.wishlist.search:
   title: 'Find a wish list'

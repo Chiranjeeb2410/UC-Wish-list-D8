@@ -1,17 +1,50 @@
 <?php
-/**
- * Confirm the deletion of a wish list.
- */
+
 namespace Drupal\uc_wishlist\Form;
 
-use Drupal\uc_wishlist\Database\DBQuery;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\uc_wishlist\Database\UcWishlistManager;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Creates the UCWishlistAdminDeleteForm class.
+ *
+ * Allows the admin to delete/alter a pre-defined wish
+ * list.
+ */
 class UCWishlistAdminDeleteForm extends ConfirmFormBase {
 
+  /**
+   * {@inheritdoc}
+   */
+  protected $wishlistManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(UcWishlistManager $wishlist_manager) {
+    $this->wishlistManager = $wishlist_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('uc_wishlist.manager')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected $user;
+
+  /**
+   * {@inheritdoc}
+   */
   protected $wishlistId;
 
   /**
@@ -53,9 +86,6 @@ class UCWishlistAdminDeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $wishlist = NULL) {
-    $this->node = $node;
-    $this->featureId = $fid;
-    $this->feature = uc_product_feature_load($pfid);
     $wishlist = uc_wishlist_load($wishlist);
     $form['wishlist'] = [
       '#type' => 'value',
@@ -69,9 +99,11 @@ class UCWishlistAdminDeleteForm extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
-    $database = new \Drupal\uc_wishlist\Database\DBQuery(\Drupal::database());
-    $database->deleteWishlist($values['wishlist']->wid);
-    drupal_set_message(t('@title has been deleted.', ['@title' => str_replace('.','',$values['wishlist']->title)]));
+    drupal_set_message($this->t('@title has been deleted.',
+      [
+        '@title' => str_replace('.',
+          '', $values['wishlist']->title)
+      ]));
     $form_state->setRedirect('uc_wishlist.admin_wishlist');
   }
 

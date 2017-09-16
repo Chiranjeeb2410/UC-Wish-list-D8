@@ -4,7 +4,6 @@ namespace Drupal\uc_wishlist;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Url;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -14,16 +13,20 @@ use Drupal\Core\Routing\RedirectDestinationInterface;
 /**
  * Defining a class for building list of wishlist entities.
  *
- *@see \Drupal\uc_wishlist\Entity\UcWishlist
+ * @see \Drupal\uc_wishlist\Entity\UcWishlist
  */
 class UcWishlistListBuilder extends EntityListBuilder {
 
   /**
+   * Factory class Creating entity query objects.
+   *
    * @var \Drupal\Core\Entity\Query\QueryFactory
    */
   protected $queryFactory;
 
   /**
+   * Provides an interface defining a date formatter.
+   *
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $dateFormatter;

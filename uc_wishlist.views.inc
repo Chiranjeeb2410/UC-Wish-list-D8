@@ -2,7 +2,7 @@
 
 /**
  * @file
- * contains the views integration for wishlists.
+ * Contains the views integration for wishlists.
  */
 
 /**

@@ -4,7 +4,7 @@ uc_wishlist.settings:
     _form: '\Drupal\uc_wishlist\Form\UcWishlistConfigForm'
     _title: 'Wish list settings'
   requirements:
-    _permission: 'Administer wish list settings.'
+    _permission: 'administer wish lists'
   options:
     _admin_route: TRUE
 
@@ -12,9 +12,9 @@ uc_wishlist.admin_wishlist:
   path: '/admin/store/customers/wishlist'
   defaults:
     _title: 'Wish lists'
-    _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::AdminWishlist'
+    _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::adminWishlist'
   requirements:
-    _permission: 'Manage user wish lists. '
+    _permission: 'administer wish lists'
 
 uc_wishlist.admin_delete:
   path: '/admin/store/customers/wishlist/{uc_wishlist}/delete'
@@ -22,7 +22,7 @@ uc_wishlist.admin_delete:
     _title: 'Delete a wish list'
     _form: '\Drupal\uc_wishlist\Form\UCWishlistAdminDeleteForm'
   requirements:
-    _permission: 'administer wish lists.'
+    _permission: 'administer wish lists'
   options:
     _admin_route: TRUE
 
@@ -32,7 +32,7 @@ uc_wishlist.wishlist:
     _title: 'My Wish list'
     _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::myWishlist'
   requirements:
-    _permission: 'Create wish lists.'
+    _permission: 'create wish lists'
 
 uc_wishlist.wishlist_view:
   path: '/wishlist/{wid}'
@@ -40,7 +40,7 @@ uc_wishlist.wishlist_view:
     _controller: '\Drupal\uc_wishlist\Controller\UCWishlistController::viewWishlist'
     _title: 'View or modify the contents of your wish list.'
   requirements:
-    _permission: 'access wish lists.'
+    _permission: 'access wish lists'
 
 entity.uc_wishlist.canonical:
   path: '/wishlist/{wid}'
@@ -65,7 +65,7 @@ uc_wishlist.wishlist.search:
     _form: '\Drupal\uc_wishlist\Form\WishlistSearchForm'
     _title: 'Find a wish list'
   requirements:
-    _permission: 'access content'
+    _permission: 'access wish lists'
 
 uc_wishlist.wishlist.search_view:
   path: '/wishlist/search/{wid}'
@@ -73,7 +73,7 @@ uc_wishlist.wishlist.search_view:
     _form: '\Drupal\uc_wishlist\Form\WishlistSearchForm'
     _title: 'Find a wish list'
   requirements:
-    _permission: 'access content'
+    _permission: 'access wish lists'
 
 
 uc_wishlist.wishlist.email_form:
@@ -82,7 +82,7 @@ uc_wishlist.wishlist.email_form:
     _title: 'Email Wishlist'
     _form: '\Drupal\uc_wishlist\Form\WishlistEmailForm'
   requirements:
-    _permission: 'access content'
+    _permission: 'access wish lists'
 
 uc_wishlist.user_settings:
   path: '/admin/store/config/user-settings'
@@ -90,6 +90,6 @@ uc_wishlist.user_settings:
     _form: '\Drupal\uc_wishlist\Form\UserWishlistSettingsForm'
     _title: 'User wish list settings'
   requirements:
-    _permission: 'Administer user wishlist settings.'
+    _permission: 'administer wish lists'
   options:
     _admin_route: TRUE

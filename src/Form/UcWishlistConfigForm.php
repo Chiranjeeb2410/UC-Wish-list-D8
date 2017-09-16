@@ -6,7 +6,10 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
+ * Creates the UcWishlistConfigForm class.
  *
+ * Allows the admin to configure pre-defined wish
+ * list settings.
  */
 class UcWishlistConfigForm extends ConfigFormBase {
 
@@ -33,7 +36,7 @@ class UcWishlistConfigForm extends ConfigFormBase {
     $form['default_title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Default wish list title'),
-      '#description' => $this->t('The default name of a new wish list. The token %user will be replaced by the user\'s name.'),
+      '#description' => $this->t("The default name of a new wish list. The token %user will be replaced by the user's name."),
       '#default_value' => $config->get('default_title'),
     ];
     $form['save_address'] = [
@@ -74,13 +77,6 @@ class UcWishlistConfigForm extends ConfigFormBase {
     ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**
