@@ -102,7 +102,7 @@ class UCWishlistAdminDeleteForm extends ConfirmFormBase {
     drupal_set_message($this->t('@title has been deleted.',
       [
         '@title' => str_replace('.',
-          '', $values['wishlist']->title)
+          '', $values['wishlist']->title),
       ]));
     $form_state->setRedirect('uc_wishlist.admin_wishlist');
   }

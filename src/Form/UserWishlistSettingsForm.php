@@ -109,7 +109,7 @@ class UserWishlistSettingsForm extends ConfigFormBase {
       // $form['wishlist']['address']['delivery_address_select'] = $addresses;
       // unset($form['wishlist']['address']['delivery_address_select']['#suffix']);
       // }
-      // };
+      // }
       if (uc_address_field_enabled('first_name')) {
         $form['wishlist']['address']['delivery_first_name'] = uc_textfield(uc_get_field_name('first_name'), empty($wishlist->address->firstname) ? NULL : $wishlist->address->firstname, uc_address_field_required('first_name'));
       }
