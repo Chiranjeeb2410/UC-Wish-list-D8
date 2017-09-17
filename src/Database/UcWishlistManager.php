@@ -46,7 +46,6 @@ class UcWishlistManager {
     // @todo
     // extend default pager limit
     // $query->extend('PagerDefault')->limit(25)->execute();
-
     return $result;
   }
 
@@ -106,7 +105,7 @@ class UcWishlistManager {
     $this->connection->query("SELECT * FROM {uc_wishlist_products} WHERE wid = :wid AND nid = :nid AND data = :data", [
       ':wid' => $wid,
       ':nid' => $nid,
-      ':data' => serialize($data)
+      ':data' => serialize($data),
     ]);
   }
 
@@ -250,8 +249,6 @@ class UcWishlistManager {
    *
    * @param int $wpid
    *   Refers to the wish list product id.
-   * @param int $pid
-   *   Refers to the product id.
    *
    * @return string
    *   Removes the selected item from the wishlist.
